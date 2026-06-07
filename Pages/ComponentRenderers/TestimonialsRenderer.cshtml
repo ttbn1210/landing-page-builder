@@ -1,0 +1,38 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var testimonialsData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var title = testimonialsData.TryGetProperty("title", out var t) ? t.GetString() : "Testimonials";
+    var testimonials = testimonialsData.TryGetProperty("testimonials", out var tm) ? tm.EnumerateArray().ToList() : new List<JsonElement>();
+}
+
+<section class="testimonials-section">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        @if (!string.IsNullOrEmpty(title))
+        {
+            <h2 class="section-title">@title</h2>
+        }
+        
+        <div class="testimonials-grid">
+            @foreach (var testimonial in testimonials)
+            {
+                var name = testimonial.TryGetProperty("name", out var n) ? n.GetString() : "Anonymous";
+                var company = testimonial.TryGetProperty("company", out var c) ? c.GetString() : "";
+                var text = testimonial.TryGetProperty("text", out var txt) ? txt.GetString() : "";
+                
+                <div class="testimonial-item">
+                    <p>"@text"</p>
+                    <div class="testimonial-author">
+                        <strong>@name</strong>
+                        @if (!string.IsNullOrEmpty(company))
+                        {
+                            <br />
+                            <small>@company</small>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

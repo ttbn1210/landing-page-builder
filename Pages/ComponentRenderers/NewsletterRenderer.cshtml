@@ -1,0 +1,37 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var newsletterData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var title = newsletterData.TryGetProperty("title", out var t) ? t.GetString() : "Newsletter";
+    var description = newsletterData.TryGetProperty("description", out var d) ? d.GetString() : "";
+    var placeholder = newsletterData.TryGetProperty("placeholder", out var p) ? p.GetString() : "Enter your email";
+    var buttonText = newsletterData.TryGetProperty("buttonText", out var b) ? b.GetString() : "Subscribe";
+}
+
+<section class="newsletter-section">
+    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        @if (!string.IsNullOrEmpty(title))
+        {
+            <h2 class="section-title">@title</h2>
+        }
+        
+        @if (!string.IsNullOrEmpty(description))
+        {
+            <p>@description</p>
+        }
+        
+        <form onsubmit="submitNewsletter(event)" class="newsletter-form">
+            <input type="email" placeholder="@placeholder" required>
+            <button type="submit" class="btn btn-primary">@buttonText</button>
+        </form>
+    </div>
+</section>
+
+<script>
+    function submitNewsletter(e) {
+        e.preventDefault();
+        alert('Thank you for subscribing!');
+        e.target.reset();
+    }
+</script>

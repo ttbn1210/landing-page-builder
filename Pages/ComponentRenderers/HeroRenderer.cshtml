@@ -1,0 +1,22 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var heroData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var headline = heroData.GetProperty("headline").GetString() ?? "Welcome";
+    var subheadline = heroData.TryGetProperty("subheadline", out var sh) ? sh.GetString() : "";
+    var ctaText = heroData.TryGetProperty("ctaText", out var ct) ? ct.GetString() : "Learn More";
+    var ctaLink = heroData.TryGetProperty("ctaLink", out var cl) ? cl.GetString() : "#";
+    var backgroundImage = heroData.TryGetProperty("backgroundImage", out var bi) ? bi.GetString() : "";
+}
+
+<section class="hero-section" style="@(!string.IsNullOrEmpty(backgroundImage) ? $"background-image: url('{backgroundImage}');" : "")">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <h1>@headline</h1>
+        @if (!string.IsNullOrEmpty(subheadline))
+        {
+            <p>@subheadline</p>
+        }
+        <a href="@ctaLink" class="btn btn-light">@ctaText</a>
+    </div>
+</section>

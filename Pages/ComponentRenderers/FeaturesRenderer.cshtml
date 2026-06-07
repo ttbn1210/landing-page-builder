@@ -1,0 +1,32 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var featuresData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var title = featuresData.TryGetProperty("title", out var t) ? t.GetString() : "Features";
+    var items = featuresData.TryGetProperty("items", out var i) ? i.EnumerateArray().ToList() : new List<JsonElement>();
+}
+
+<section class="features-section">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        @if (!string.IsNullOrEmpty(title))
+        {
+            <h2 class="section-title">@title</h2>
+        }
+        
+        <div class="features-grid">
+            @foreach (var item in items)
+            {
+                var icon = item.TryGetProperty("icon", out var ic) ? ic.GetString() : "⭐";
+                var itemTitle = item.TryGetProperty("title", out var it) ? it.GetString() : "Feature";
+                var description = item.TryGetProperty("description", out var d) ? d.GetString() : "";
+                
+                <div class="feature-item">
+                    <div class="feature-icon">@icon</div>
+                    <h3>@itemTitle</h3>
+                    <p>@description</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>

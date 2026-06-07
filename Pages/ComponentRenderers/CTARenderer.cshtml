@@ -1,0 +1,22 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var ctaData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var headline = ctaData.TryGetProperty("headline", out var h) ? h.GetString() : "Call to Action";
+    var description = ctaData.TryGetProperty("description", out var d) ? d.GetString() : "";
+    var buttonText = ctaData.TryGetProperty("buttonText", out var bt) ? bt.GetString() : "Get Started";
+    var buttonLink = ctaData.TryGetProperty("buttonLink", out var bl) ? bl.GetString() : "#";
+    var bgColor = ctaData.TryGetProperty("backgroundColor", out var bg) ? bg.GetString() : "#007bff";
+}
+
+<section class="cta-section" style="background: linear-gradient(135deg, @bgColor 0%, @bgColor 100%);">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h2>@headline</h2>
+        @if (!string.IsNullOrEmpty(description))
+        {
+            <p>@description</p>
+        }
+        <a href="@buttonLink" class="btn btn-light">@buttonText</a>
+    </div>
+</section>

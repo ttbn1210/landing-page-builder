@@ -1,0 +1,33 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var galleryData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var title = galleryData.TryGetProperty("title", out var t) ? t.GetString() : "Gallery";
+    var images = galleryData.TryGetProperty("images", out var i) ? i.EnumerateArray().ToList() : new List<JsonElement>();
+}
+
+<section style="padding: 60px 20px; background: #f8f9fa;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        @if (!string.IsNullOrEmpty(title))
+        {
+            <h2 class="section-title">@title</h2>
+        }
+        
+        @if (images.Any())
+        {
+            <div class="gallery-grid">
+                @foreach (var image in images)
+                {
+                    var imageUrl = image.ValueKind == JsonValueKind.String ? image.GetString() : "";
+                    @if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        <div class="gallery-item">
+                            <img src="@imageUrl" alt="Gallery item">
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</section>

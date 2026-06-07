@@ -1,0 +1,14 @@
+@model PageComponent
+@using System.Text.Json
+
+@{
+    var textData = JsonSerializer.Deserialize<JsonElement>(Model.Content);
+    var content = textData.TryGetProperty("content", out var c) ? c.GetString() : "";
+    var fullWidth = textData.TryGetProperty("fullWidth", out var fw) ? fw.GetBoolean() : false;
+}
+
+<section style="padding: 60px 20px; background: white;">
+    <div style="max-width: @(fullWidth ? "100%" : "1200px"); margin: 0 auto;">
+        @Html.Raw(content)
+    </div>
+</section>
