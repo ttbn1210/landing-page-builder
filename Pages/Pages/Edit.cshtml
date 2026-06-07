@@ -14,7 +14,7 @@
                     <a href="/Dashboard" class="btn btn-sm btn-secondary">← Back</a>
                 </div>
                 
-                <form method="post" asp-page-handler="SaveSettings" class="mb-4">
+                <form method="post" class="mb-4">
                     <input type="hidden" asp-for="LandingPage.Id" />
                     
                     <div class="mb-3">
@@ -120,7 +120,7 @@
                                         <a class="nav-link active" data-bs-toggle="tab" href="#editor-@component.Id">📝 Editor</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#preview-@component.Id">👁️ Preview</a>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#preview-@component.Id" onclick="loadPreview(@component.Id)">👁️ Preview</a>
                                     </li>
                                 </ul>
 
@@ -159,8 +159,8 @@
                                     </div>
                                     
                                     <div id="preview-@component.Id" class="tab-pane fade">
-                                        <div class="border rounded p-3 bg-light" id="preview-container-@component.Id">
-                                            @Html.Raw(component.Content)
+                                        <div class="border rounded p-3 bg-light" id="preview-container-@component.Id" style="min-height: 300px;">
+                                            <p class="text-muted">Loading preview...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -197,6 +197,22 @@
         });
 
         let draggedElement = null;
+
+        async function loadPreview(componentId) {
+            const previewContainer = document.getElementById(`preview-container-${componentId}`);
+            try {
+                const response = await fetch(`?handler=RenderComponent&componentId=${componentId}`);
+                if (response.ok) {
+                    const html = await response.text();
+                    previewContainer.innerHTML = html;
+                } else {
+                    previewContainer.innerHTML = '<p class="alert alert-danger">Error loading preview</p>';
+                }
+            } catch (e) {
+                previewContainer.innerHTML = '<p class="alert alert-danger">Error loading preview</p>';
+                console.error(e);
+            }
+        }
 
         function addComponent(componentName, displayName) {
             const pageId = @Model.LandingPage.Id;
@@ -248,11 +264,14 @@
                 }),
                 'CallToAction': JSON.stringify({
                     headline: 'Ready to get started?',
+                    description: '',
                     buttonText: 'Sign Up Now',
-                    buttonLink: '#'
+                    buttonLink: '#',
+                    backgroundColor: '#007bff'
                 }),
                 'TextContent': JSON.stringify({
-                    content: '<p>Add your content here...</p>'
+                    content: '<p>Add your content here...</p>',
+                    fullWidth: false
                 }),
                 'Gallery': JSON.stringify({
                     title: 'Image Gallery',
@@ -261,11 +280,13 @@
                 'Newsletter': JSON.stringify({
                     title: 'Subscribe to Our Newsletter',
                     description: 'Get updates delivered to your inbox',
-                    placeholder: 'Enter your email'
+                    placeholder: 'Enter your email',
+                    buttonText: 'Subscribe'
                 }),
                 'ContactForm': JSON.stringify({
                     title: 'Contact Us',
-                    fields: ['Name', 'Email', 'Message'],
+                    description: 'Have questions? We\'d love to hear from you!',
+                    recipientEmail: '',
                     successMessage: 'Thank you for contacting us!'
                 })
             };
@@ -283,7 +304,7 @@
             .then(r => {
                 if (r.ok) {
                     showNotification('✅ Component saved successfully!', 'success');
-                    updatePreview(componentId);
+                    loadPreview(componentId);
                 } else {
                     showNotification('❌ Error saving component', 'danger');
                 }
@@ -299,7 +320,7 @@
             let content = {};
             
             editors.forEach(editor => {
-                if (editor.name) {
+                if (editor.name && !editor.name.startsWith('__')) {
                     content[editor.name] = editor.value;
                 }
             });
@@ -350,14 +371,6 @@
                 }
             })
             .catch(e => showNotification('❌ Error moving component', 'danger'));
-        }
-
-        function updatePreview(componentId) {
-            const previewContainer = document.getElementById(`preview-container-${componentId}`);
-            if (previewContainer) {
-                const content = getComponentContent(componentId);
-                previewContainer.innerHTML = content;
-            }
         }
 
         function showNotification(message, type) {
