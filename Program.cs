@@ -64,7 +64,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     
     await context.Database.MigrateAsync();
-    await SeedData.InitializeAsync(userManager);
+    await SeedData.InitializeAsync(userManager, context);
 }
 
 app.Run();
