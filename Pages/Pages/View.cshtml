@@ -1,0 +1,37 @@
+@page "{slug}"
+@model ViewModel
+@{
+    ViewData["Title"] = Model.LandingPage?.Title ?? "Landing Page";
+}
+
+<style>
+    body { margin: 0; padding: 0; }
+    .page-container { min-height: 100vh; }
+</style>
+
+@if (Model.LandingPage != null)
+{
+    <div class="page-container">
+        @if (Model.LandingPage.LogoUrl != null)
+        {
+            <header style="background-color: @Model.LandingPage.HeaderColor; padding: 20px;">
+                <img src="@Model.LandingPage.LogoUrl" alt="Logo" style="max-height: 50px;">
+            </header>
+        }
+
+        <main>
+            @foreach (var component in Model.LandingPage.Components.OrderBy(c => c.Order))
+            {
+                @Html.Raw(component.Content)
+            }
+        </main>
+
+        <footer style="background-color: @Model.LandingPage.FooterColor; padding: 40px 20px; text-align: center; color: #666;">
+            <p>&copy; @DateTime.Now.Year. All rights reserved.</p>
+        </footer>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">Landing page not found.</div>
+}

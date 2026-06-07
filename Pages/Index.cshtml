@@ -1,0 +1,51 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="hero-section py-5 bg-light">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-4">Create Beautiful Landing Pages</h1>
+        <p class="lead mb-4">No coding required. Just drag, drop, and publish.</p>
+        @if (!User.Identity?.IsAuthenticated == true)
+        {
+            <a href="/Identity/Account/Register" class="btn btn-primary btn-lg me-2">Get Started</a>
+            <a href="/Identity/Account/Login" class="btn btn-outline-primary btn-lg">Sign In</a>
+        }
+        else
+        {
+            <a href="/Dashboard" class="btn btn-primary btn-lg me-2">Go to Dashboard</a>
+            <a href="/Pages/Create" class="btn btn-outline-primary btn-lg">Create New Page</a>
+        }
+    </div>
+</section>
+
+<section class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card p-4 text-center">
+                    <div class="feature-icon mb-3">🎨</div>
+                    <h3>Drag & Drop Editor</h3>
+                    <p>Easy-to-use visual editor with no coding required.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card p-4 text-center">
+                    <div class="feature-icon mb-3">📱</div>
+                    <h3>Mobile Responsive</h3>
+                    <p>All pages automatically optimize for mobile devices.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card p-4 text-center">
+                    <div class="feature-icon mb-3">⚡</div>
+                    <h3>Fast & Secure</h3>
+                    <p>Built on .NET 10 for speed and security.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

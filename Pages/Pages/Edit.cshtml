@@ -1,0 +1,124 @@
+@page "{id:int}"
+@model EditModel
+@{
+    ViewData["Title"] = "Edit Landing Page";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-3 border-end">
+            <div class="sticky-top">
+                <h5>Page Settings</h5>
+                <form method="post" asp-page-handler="SaveSettings">
+                    <input type="hidden" asp-for="LandingPage.Id" />
+                    
+                    <div class="mb-3">
+                        <label for="Title" class="form-label">Page Title</label>
+                        <input type="text" class="form-control" id="Title" asp-for="LandingPage.Title">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="IsPublished" class="form-check-label">Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="IsPublished" value="true" 
+                                   @(Model.LandingPage.IsPublished ? "checked" : "")>
+                            <label class="form-check-label">Published</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="IsPublished" value="false" 
+                                   @(!Model.LandingPage.IsPublished ? "checked" : "")>
+                            <label class="form-check-label">Draft</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-sm btn-primary w-100">Save Settings</button>
+                </form>
+
+                <hr>
+                <h5 class="mt-4">Add Components</h5>
+                <div class="d-grid gap-2">
+                    @foreach (var componentType in Model.ComponentTypes)
+                    {
+                        <button class="btn btn-outline-secondary btn-sm" onclick="addComponent('@componentType.Name')">+ @componentType.DisplayName</button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div id="componentsContainer" class="row g-3">
+                @if (Model.LandingPage.Components.Any())
+                {
+                    @foreach (var component in Model.LandingPage.Components.OrderBy(c => c.Order))
+                    {
+                        <div class="col-12 component-item" data-component-id="@component.Id">
+                            <div class="card">
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                    <span>@component.ComponentName</span>
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="moveUp(@component.Id)">↑</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="moveDown(@component.Id)">↓</button>
+                                        <button type="button" class="btn btn-outline-danger" onclick="deleteComponent(@component.Id)">🗑️</button>
+                                    </div>
+                                </div>
+                                <div class="card-body component-editor" data-component-id="@component.Id">
+                                    <textarea class="form-control" rows="6">@component.Content</textarea>
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="saveComponent(@component.Id)">Save Component</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function addComponent(componentName) {
+            const pageId = @Model.LandingPage.Id;
+            const content = JSON.stringify({ title: 'New ' + componentName, content: '' });
+            
+            fetch('/api/components', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ landingPageId: pageId, componentName, content, order: 0 })
+            })
+            .then(r => r.json())
+            .then(data => location.reload())
+            .catch(e => alert('Error adding component'));
+        }
+
+        function saveComponent(componentId) {
+            const textarea = document.querySelector(`[data-component-id="${componentId}"] textarea`);
+            const content = textarea.value;
+            
+            fetch(`/api/components/${componentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            })
+            .then(r => alert('Component saved!'))
+            .catch(e => alert('Error saving component'));
+        }
+
+        function deleteComponent(componentId) {
+            if (confirm('Delete this component?')) {
+                fetch(`/api/components/${componentId}`, { method: 'DELETE' })
+                    .then(r => location.reload())
+                    .catch(e => alert('Error deleting component'));
+            }
+        }
+
+        function moveUp(componentId) {
+            // Implementation for moving component up
+        }
+
+        function moveDown(componentId) {
+            // Implementation for moving component down
+        }
+    </script>
+}
