@@ -3,6 +3,7 @@ using LandingPageBuilder.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace LandingPageBuilder.Pages.Pages
@@ -11,15 +12,22 @@ namespace LandingPageBuilder.Pages.Pages
     public class EditModel : PageModel
     {
         private readonly ILandingPageRepository _pageRepository;
+        private readonly IPageComponentRepository _componentRepository;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<EditModel> _logger;
 
         public LandingPage LandingPage { get; set; } = new();
         public List<ComponentType> ComponentTypes { get; set; } = new();
+        public int PageViews { get; set; }
 
-        public EditModel(ILandingPageRepository pageRepository, ApplicationDbContext context, ILogger<EditModel> logger)
+        public EditModel(
+            ILandingPageRepository pageRepository,
+            IPageComponentRepository componentRepository,
+            ApplicationDbContext context,
+            ILogger<EditModel> logger)
         {
             _pageRepository = pageRepository;
+            _componentRepository = componentRepository;
             _context = context;
             _logger = logger;
         }
@@ -36,6 +44,7 @@ namespace LandingPageBuilder.Pages.Pages
 
             LandingPage = page;
             ComponentTypes = await _context.ComponentTypes.ToListAsync();
+            PageViews = await _context.PageAnalytics.CountAsync(a => a.LandingPageId == id);
 
             return Page();
         }
@@ -52,6 +61,10 @@ namespace LandingPageBuilder.Pages.Pages
 
             page.Title = LandingPage.Title;
             page.IsPublished = LandingPage.IsPublished;
+            page.MetaDescription = LandingPage.MetaDescription;
+            page.LogoUrl = LandingPage.LogoUrl;
+            page.HeaderColor = LandingPage.HeaderColor;
+
             await _pageRepository.UpdateAsync(page);
 
             return RedirectToPage(new { id = page.Id });

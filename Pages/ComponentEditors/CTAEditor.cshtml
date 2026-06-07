@@ -1,0 +1,29 @@
+@model PageComponent
+
+<form class="component-form">
+    <div class="mb-3">
+        <label class="form-label fw-bold">🎯 Headline</label>
+        <input type="text" class="form-control" name="headline" placeholder="Ready to get started?" value="Ready to get started?">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">📝 Description</label>
+        <textarea class="form-control" name="description" rows="3" placeholder="Add a compelling call to action message"></textarea>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">🔘 Button Text</label>
+            <input type="text" class="form-control" name="buttonText" placeholder="Sign Up Now" value="Sign Up Now">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">🔗 Button Link</label>
+            <input type="url" class="form-control" name="buttonLink" placeholder="https://...">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">🎨 Background Color</label>
+        <input type="color" class="form-control form-control-color" name="backgroundColor" value="#007bff">
+    </div>
+</form>

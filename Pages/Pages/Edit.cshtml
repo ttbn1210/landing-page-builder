@@ -6,70 +6,179 @@
 
 <div class="container-fluid py-4">
     <div class="row">
-        <div class="col-md-3 border-end">
-            <div class="sticky-top">
-                <h5>Page Settings</h5>
-                <form method="post" asp-page-handler="SaveSettings">
+        <!-- Sidebar -->
+        <div class="col-md-3 border-end bg-light">
+            <div class="sticky-top pt-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Page Settings</h5>
+                    <a href="/Dashboard" class="btn btn-sm btn-secondary">← Back</a>
+                </div>
+                
+                <form method="post" asp-page-handler="SaveSettings" class="mb-4">
                     <input type="hidden" asp-for="LandingPage.Id" />
                     
                     <div class="mb-3">
-                        <label for="Title" class="form-label">Page Title</label>
+                        <label for="Title" class="form-label fw-bold">📄 Page Title</label>
                         <input type="text" class="form-control" id="Title" asp-for="LandingPage.Title">
                     </div>
 
                     <div class="mb-3">
-                        <label for="IsPublished" class="form-check-label">Status</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="IsPublished" value="true" 
-                                   @(Model.LandingPage.IsPublished ? "checked" : "")>
-                            <label class="form-check-label">Published</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="IsPublished" value="false" 
-                                   @(!Model.LandingPage.IsPublished ? "checked" : "")>
-                            <label class="form-check-label">Draft</label>
+                        <label for="MetaDescription" class="form-label fw-bold">🔍 SEO Description</label>
+                        <textarea class="form-control" id="MetaDescription" asp-for="LandingPage.MetaDescription" rows="2"></textarea>
+                        <small class="form-text text-muted">Max 160 chars for search results</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="LogoUrl" class="form-label fw-bold">🎨 Logo URL</label>
+                        <input type="url" class="form-control" id="LogoUrl" asp-for="LandingPage.LogoUrl" placeholder="https://...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="HeaderColor" class="form-label fw-bold">🎨 Header Color</label>
+                        <div class="input-group">
+                            <input type="color" class="form-control form-control-color" id="HeaderColor" asp-for="LandingPage.HeaderColor">
+                            <span class="input-group-text">@Model.LandingPage.HeaderColor</span>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-sm btn-primary w-100">Save Settings</button>
+                    <div class="mb-3">
+                        <label for="IsPublished" class="form-check-label fw-bold">📊 Status</label>
+                        <div class="mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="IsPublished" value="true" id="published"
+                                       @(Model.LandingPage.IsPublished ? "checked" : "")>
+                                <label class="form-check-label" for="published">✅ Published</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="IsPublished" value="false" id="draft"
+                                       @(!Model.LandingPage.IsPublished ? "checked" : "")>
+                                <label class="form-check-label" for="draft">📝 Draft</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">💾 Save Settings</button>
                 </form>
 
                 <hr>
-                <h5 class="mt-4">Add Components</h5>
-                <div class="d-grid gap-2">
+
+                <!-- Add Components Section -->
+                <h5 class="mt-4 mb-3">➕ Add Components</h5>
+                <div class="d-grid gap-2" style="max-height: 400px; overflow-y: auto;">
                     @foreach (var componentType in Model.ComponentTypes)
                     {
-                        <button class="btn btn-outline-secondary btn-sm" onclick="addComponent('@componentType.Name')">+ @componentType.DisplayName</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm text-start" 
+                                onclick="addComponent('@componentType.Name', '@componentType.DisplayName')" 
+                                title="@componentType.Description">
+                            <small>+ @componentType.DisplayName</small>
+                        </button>
                     }
+                </div>
+
+                <hr class="mt-4">
+
+                <!-- Analytics Section -->
+                <h5 class="mb-3">📈 Analytics</h5>
+                <div class="alert alert-info small">
+                    <p><strong>Views:</strong> @Model.PageViews</p>
+                    <p><strong>Last Updated:</strong> @Model.LandingPage.UpdatedAt.ToString("g")</p>
+                    <p class="mb-0"><strong>URL:</strong></p>
+                    <small class="text-break">@($"https://{Request.Host}/pages/view/{Model.LandingPage.Slug}")</small>
                 </div>
             </div>
         </div>
 
+        <!-- Main Content Area -->
         <div class="col-md-9">
-            <div id="componentsContainer" class="row g-3">
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <h3>Components</h3>
+                <span class="badge bg-secondary">@Model.LandingPage.Components.Count items</span>
+            </div>
+
+            <div id="componentsContainer" class="space-y-3">
                 @if (Model.LandingPage.Components.Any())
                 {
                     @foreach (var component in Model.LandingPage.Components.OrderBy(c => c.Order))
                     {
-                        <div class="col-12 component-item" data-component-id="@component.Id">
-                            <div class="card">
-                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                    <span>@component.ComponentName</span>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-secondary" onclick="moveUp(@component.Id)">↑</button>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="moveDown(@component.Id)">↓</button>
-                                        <button type="button" class="btn btn-outline-danger" onclick="deleteComponent(@component.Id)">🗑️</button>
+                        <div class="component-item card mb-3" data-component-id="@component.Id" draggable="true">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="drag-handle me-2" style="cursor: grab;">⋮⋮</span>
+                                    <strong>@component.ComponentName</strong>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-light btn-sm" onclick="moveUp(@component.Id)" title="Move Up">⬆️</button>
+                                    <button type="button" class="btn btn-light btn-sm" onclick="moveDown(@component.Id)" title="Move Down">⬇️</button>
+                                    <button type="button" class="btn btn-light btn-sm" onclick="duplicateComponent(@component.Id)" title="Duplicate">📋</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteComponent(@component.Id)" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#editor-@component.Id">📝 Editor</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#preview-@component.Id">👁️ Preview</a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content mt-3">
+                                    <div id="editor-@component.Id" class="tab-pane fade show active">
+                                        @switch(component.ComponentName)
+                                        {
+                                            case "Hero":
+                                                <partial name="ComponentEditors/HeroEditor" model="component" />
+                                                break;
+                                            case "Features":
+                                                <partial name="ComponentEditors/FeaturesEditor" model="component" />
+                                                break;
+                                            case "Testimonials":
+                                                <partial name="ComponentEditors/TestimonialsEditor" model="component" />
+                                                break;
+                                            case "CallToAction":
+                                                <partial name="ComponentEditors/CTAEditor" model="component" />
+                                                break;
+                                            case "TextContent":
+                                                <partial name="ComponentEditors/TextContentEditor" model="component" />
+                                                break;
+                                            case "Gallery":
+                                                <partial name="ComponentEditors/GalleryEditor" model="component" />
+                                                break;
+                                            case "Newsletter":
+                                                <partial name="ComponentEditors/NewsletterEditor" model="component" />
+                                                break;
+                                            case "ContactForm":
+                                                <partial name="ComponentEditors/ContactFormEditor" model="component" />
+                                                break;
+                                            default:
+                                                <textarea class="form-control" rows="6" id="content-@component.Id">@component.Content</textarea>
+                                                break;
+                                        }
+                                    </div>
+                                    
+                                    <div id="preview-@component.Id" class="tab-pane fade">
+                                        <div class="border rounded p-3 bg-light" id="preview-container-@component.Id">
+                                            @Html.Raw(component.Content)
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-body component-editor" data-component-id="@component.Id">
-                                    <textarea class="form-control" rows="6">@component.Content</textarea>
-                                </div>
-                                <div class="card-footer">
-                                    <button type="button" class="btn btn-sm btn-primary" onclick="saveComponent(@component.Id)">Save Component</button>
-                                </div>
+                            </div>
+                            
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-sm btn-success" onclick="saveComponent(@component.Id)">💾 Save Component</button>
+                                <span class="text-muted small ms-2">Last updated: @component.UpdatedAt.ToString("g")</span>
                             </div>
                         </div>
                     }
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center py-5">
+                        <p>No components added yet.</p>
+                        <p><strong>Start by adding components from the left sidebar →</strong></p>
+                    </div>
                 }
             </div>
         </div>
@@ -77,48 +186,223 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
     <script>
-        function addComponent(componentName) {
+        // Initialize TinyMCE for rich text editing
+        tinymce.init({
+            selector: '.tinymce-editor',
+            plugins: 'lists link image table code',
+            toolbar: 'undo redo | bold italic | bullist numlist | link image | code',
+            height: 300
+        });
+
+        let draggedElement = null;
+
+        function addComponent(componentName, displayName) {
             const pageId = @Model.LandingPage.Id;
-            const content = JSON.stringify({ title: 'New ' + componentName, content: '' });
+            let defaultContent = getDefaultComponentContent(componentName);
             
             fetch('/api/components', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ landingPageId: pageId, componentName, content, order: 0 })
+                body: JSON.stringify({ 
+                    landingPageId: pageId, 
+                    componentName: componentName, 
+                    content: defaultContent, 
+                    order: 999 
+                })
             })
             .then(r => r.json())
-            .then(data => location.reload())
-            .catch(e => alert('Error adding component'));
+            .then(data => {
+                showNotification('✅ Component added successfully!', 'success');
+                setTimeout(() => location.reload(), 500);
+            })
+            .catch(e => {
+                console.error(e);
+                showNotification('❌ Error adding component', 'danger');
+            });
+        }
+
+        function getDefaultComponentContent(componentName) {
+            const defaults = {
+                'Hero': JSON.stringify({
+                    headline: 'Welcome to Our Product',
+                    subheadline: 'Amazing features for amazing results',
+                    ctaText: 'Get Started',
+                    ctaLink: '#',
+                    backgroundImage: ''
+                }),
+                'Features': JSON.stringify({
+                    title: 'Our Features',
+                    items: [
+                        { icon: '⚡', title: 'Fast', description: 'Lightning quick performance' },
+                        { icon: '🔒', title: 'Secure', description: 'Enterprise-grade security' },
+                        { icon: '📱', title: 'Responsive', description: 'Works on all devices' }
+                    ]
+                }),
+                'Testimonials': JSON.stringify({
+                    title: 'What Our Customers Say',
+                    testimonials: [
+                        { name: 'John Doe', company: 'Tech Corp', text: 'Amazing product!' }
+                    ]
+                }),
+                'CallToAction': JSON.stringify({
+                    headline: 'Ready to get started?',
+                    buttonText: 'Sign Up Now',
+                    buttonLink: '#'
+                }),
+                'TextContent': JSON.stringify({
+                    content: '<p>Add your content here...</p>'
+                }),
+                'Gallery': JSON.stringify({
+                    title: 'Image Gallery',
+                    images: []
+                }),
+                'Newsletter': JSON.stringify({
+                    title: 'Subscribe to Our Newsletter',
+                    description: 'Get updates delivered to your inbox',
+                    placeholder: 'Enter your email'
+                }),
+                'ContactForm': JSON.stringify({
+                    title: 'Contact Us',
+                    fields: ['Name', 'Email', 'Message'],
+                    successMessage: 'Thank you for contacting us!'
+                })
+            };
+            return defaults[componentName] || JSON.stringify({ content: 'New component' });
         }
 
         function saveComponent(componentId) {
-            const textarea = document.querySelector(`[data-component-id="${componentId}"] textarea`);
-            const content = textarea.value;
+            const content = getComponentContent(componentId);
             
             fetch(`/api/components/${componentId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content })
+                body: JSON.stringify({ content: content })
             })
-            .then(r => alert('Component saved!'))
-            .catch(e => alert('Error saving component'));
+            .then(r => {
+                if (r.ok) {
+                    showNotification('✅ Component saved successfully!', 'success');
+                    updatePreview(componentId);
+                } else {
+                    showNotification('❌ Error saving component', 'danger');
+                }
+            })
+            .catch(e => {
+                console.error(e);
+                showNotification('❌ Error saving component', 'danger');
+            });
+        }
+
+        function getComponentContent(componentId) {
+            const editors = document.querySelectorAll(`[data-component-id="${componentId}"] input, [data-component-id="${componentId}"] textarea`);
+            let content = {};
+            
+            editors.forEach(editor => {
+                if (editor.name) {
+                    content[editor.name] = editor.value;
+                }
+            });
+            
+            return JSON.stringify(content);
         }
 
         function deleteComponent(componentId) {
-            if (confirm('Delete this component?')) {
+            if (confirm('🗑️ Are you sure you want to delete this component? This cannot be undone.')) {
                 fetch(`/api/components/${componentId}`, { method: 'DELETE' })
-                    .then(r => location.reload())
-                    .catch(e => alert('Error deleting component'));
+                    .then(r => {
+                        showNotification('✅ Component deleted!', 'success');
+                        setTimeout(() => location.reload(), 500);
+                    })
+                    .catch(e => showNotification('❌ Error deleting component', 'danger'));
             }
         }
 
+        function duplicateComponent(componentId) {
+            fetch(`/api/components/${componentId}/duplicate`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    showNotification('✅ Component duplicated!', 'success');
+                    setTimeout(() => location.reload(), 500);
+                })
+                .catch(e => showNotification('❌ Error duplicating component', 'danger'));
+        }
+
         function moveUp(componentId) {
-            // Implementation for moving component up
+            reorderComponent(componentId, 'up');
         }
 
         function moveDown(componentId) {
-            // Implementation for moving component down
+            reorderComponent(componentId, 'down');
         }
+
+        function reorderComponent(componentId, direction) {
+            const pageId = @Model.LandingPage.Id;
+            fetch(`/api/components/${componentId}/reorder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ direction })
+            })
+            .then(r => {
+                if (r.ok) {
+                    showNotification('✅ Component moved!', 'success');
+                    setTimeout(() => location.reload(), 300);
+                }
+            })
+            .catch(e => showNotification('❌ Error moving component', 'danger'));
+        }
+
+        function updatePreview(componentId) {
+            const previewContainer = document.getElementById(`preview-container-${componentId}`);
+            if (previewContainer) {
+                const content = getComponentContent(componentId);
+                previewContainer.innerHTML = content;
+            }
+        }
+
+        function showNotification(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+            alertDiv.style.zIndex = '9999';
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 3000);
+        }
+
+        // Drag and drop for components
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('component-item')) {
+                draggedElement = e.target;
+                e.target.style.opacity = '0.5';
+            }
+        });
+
+        document.addEventListener('dragend', (e) => {
+            if (e.target.classList.contains('component-item')) {
+                e.target.style.opacity = '1';
+            }
+        });
+
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (e.target.classList.contains('component-item') && draggedElement) {
+                e.target.style.borderTop = '3px solid #007bff';
+            }
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            if (e.target.classList.contains('component-item')) {
+                e.target.style.borderTop = 'none';
+            }
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.target.classList.contains('component-item') && draggedElement && draggedElement !== e.target) {
+                const container = e.target.parentNode;
+                container.insertBefore(draggedElement, e.target);
+                e.target.style.borderTop = 'none';
+            }
+        });
     </script>
 }

@@ -1,0 +1,52 @@
+@model PageComponent
+
+<form class="component-form">
+    <div class="mb-3">
+        <label class="form-label fw-bold">🎨 Gallery Title</label>
+        <input type="text" class="form-control" name="title" placeholder="Our Gallery" value="Our Gallery">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">🖼️ Upload Images</label>
+        <input type="file" class="form-control" id="imageUpload" multiple accept="image/*">
+        <small class="form-text text-muted d-block mt-2">Upload JPG, PNG, or WebP images</small>
+    </div>
+
+    <div id="imagePreview" class="row g-2 mt-3">
+        <!-- Image previews will appear here -->
+    </div>
+
+    <input type="hidden" name="images" id="imageUrls" value="">
+
+    <script>
+        document.getElementById('imageUpload').addEventListener('change', async (e) => {
+            const files = e.target.files;
+            const preview = document.getElementById('imagePreview');
+            const urls = [];
+
+            for (let file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    urls.push(data.url);
+
+                    const img = document.createElement('img');
+                    img.src = data.url;
+                    img.className = 'col-md-3 rounded';
+                    img.style.maxHeight = '150px';
+                    preview.appendChild(img);
+                } catch (err) {
+                    console.error('Upload failed', err);
+                }
+            }
+
+            document.getElementById('imageUrls').value = JSON.stringify(urls);
+        });
+    </script>
+</form>

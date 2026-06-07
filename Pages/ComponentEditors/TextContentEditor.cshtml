@@ -1,0 +1,19 @@
+@model PageComponent
+
+<form class="component-form">
+    <div class="mb-3">
+        <label class="form-label fw-bold">📝 Rich Text Content</label>
+        <textarea class="form-control tinymce-editor" name="content" rows="10">@Model.Content</textarea>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="fullWidth" id="fullWidth">
+        <label class="form-check-label" for="fullWidth">
+            Full Width Section
+        </label>
+    </div>
+
+    <div class="alert alert-info small">
+        <strong>💡 Tip:</strong> Use the editor above to format your text, add links, lists, and more.
+    </div>
+</form>

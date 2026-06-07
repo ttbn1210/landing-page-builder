@@ -1,0 +1,27 @@
+@model PageComponent
+
+<form class="component-form">
+    <div class="mb-3">
+        <label class="form-label fw-bold">📧 Form Title</label>
+        <input type="text" class="form-control" name="title" placeholder="Contact Us" value="Contact Us">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">📝 Description</label>
+        <textarea class="form-control" name="description" rows="2" placeholder="Let us know how we can help"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">📬 Email Recipient</label>
+        <input type="email" class="form-control" name="recipientEmail" placeholder="your@email.com">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">✅ Success Message</label>
+        <input type="text" class="form-control" name="successMessage" placeholder="Thank you for contacting us!" value="Thank you for contacting us!">
+    </div>
+
+    <div class="alert alert-warning small">
+        <strong>⚠️ Note:</strong> Form submissions will be sent to the email address above. Make sure it's valid!
+    </div>
+</form>

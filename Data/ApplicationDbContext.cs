@@ -14,6 +14,9 @@ namespace LandingPageBuilder.Data
         public DbSet<LandingPage> LandingPages { get; set; } = null!;
         public DbSet<PageComponent> PageComponents { get; set; } = null!;
         public DbSet<ComponentType> ComponentTypes { get; set; } = null!;
+        public DbSet<PageAnalytics> PageAnalytics { get; set; } = null!;
+        public DbSet<FormSubmission> FormSubmissions { get; set; } = null!;
+        public DbSet<MediaFile> MediaFiles { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +33,7 @@ namespace LandingPageBuilder.Data
                 entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETUTCDATE()");
                 entity.HasIndex(e => e.Slug).IsUnique();
                 entity.HasIndex(e => e.UserId);
+                entity.HasMany(e => e.Components).WithOne(c => c.LandingPage).OnDelete(DeleteBehavior.Cascade);
             });
 
             // PageComponent configuration
@@ -53,6 +57,38 @@ namespace LandingPageBuilder.Data
                 entity.Property(e => e.Description).HasMaxLength(500);
             });
 
+            // PageAnalytics configuration
+            modelBuilder.Entity<PageAnalytics>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasForeignKey(e => e.LandingPageId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasIndex(e => e.LandingPageId);
+                entity.HasIndex(e => e.VisitedAt);
+            });
+
+            // FormSubmission configuration
+            modelBuilder.Entity<FormSubmission>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasForeignKey(e => e.LandingPageId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasIndex(e => e.LandingPageId);
+                entity.HasIndex(e => e.SubmittedAt);
+            });
+
+            // MediaFile configuration
+            modelBuilder.Entity<MediaFile>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasForeignKey(e => e.LandingPageId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasForeignKey(e => e.UserId)
+                    .References<ApplicationUser>(u => u.Id)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(e => e.LandingPageId);
+            });
+
             // Seed component types
             modelBuilder.Entity<ComponentType>().HasData(
                 new ComponentType { Id = 1, Name = "Hero", DisplayName = "Hero Section", Description = "Large banner section with headline and CTA" },
@@ -62,7 +98,7 @@ namespace LandingPageBuilder.Data
                 new ComponentType { Id = 5, Name = "TextContent", DisplayName = "Text Content", Description = "Rich text content section" },
                 new ComponentType { Id = 6, Name = "Gallery", DisplayName = "Image Gallery", Description = "Image gallery with multiple images" },
                 new ComponentType { Id = 7, Name = "Newsletter", DisplayName = "Newsletter Signup", Description = "Email subscription form" },
-                new ComponentType { Id = 8, Name = "Pricing", DisplayName = "Pricing Table", Description = "Pricing plans comparison" }
+                new ComponentType { Id = 8, Name = "ContactForm", DisplayName = "Contact Form", Description = "Customer contact form" }
             );
         }
     }

@@ -1,0 +1,20 @@
+@model PageComponent
+
+<form class="component-form">
+    <div class="mb-3">
+        <label class="form-label fw-bold">⭐ Section Title</label>
+        <input type="text" class="form-control" name="title" placeholder="What Our Customers Say" value="What Our Customers Say">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">💬 Testimonials (JSON Format)</label>
+        <textarea class="form-control" name="testimonials" rows="8" placeholder='[{"name":"John Doe","company":"TechCorp","text":"Amazing!","avatar":""}, ...]'>[
+  {"name":"John Doe","company":"Tech Corp","text":"This product changed our business!","avatar":""},
+  {"name":"Jane Smith","company":"Innovation Inc","text":"Best investment we made.","avatar":""}
+]</textarea>
+    </div>
+
+    <div class="alert alert-info small">
+        <strong>📋 Format:</strong> name, company, testimonial text, and optional avatar URL.
+    </div>
+</form>

@@ -1,0 +1,21 @@
+@model PageComponent
+
+<form class="component-form">
+    <div class="mb-3">
+        <label class="form-label fw-bold">📌 Section Title</label>
+        <input type="text" class="form-control" name="title" placeholder="e.g., Our Features" value="Our Features">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">⭐ Features (JSON Format)</label>
+        <textarea class="form-control" name="items" rows="8" placeholder='[{"icon":"⚡","title":"Fast","description":"Lightning quick"}, ...]'>[
+  {"icon":"⚡","title":"Fast","description":"Lightning quick performance"},
+  {"icon":"🔒","title":"Secure","description":"Enterprise-grade security"},
+  {"icon":"📱","title":"Responsive","description":"Works on all devices"}
+]</textarea>
+    </div>
+
+    <div class="alert alert-info small">
+        <strong>📋 Format:</strong> Each feature needs icon, title, and description. Use emojis for icons!
+    </div>
+</form>
