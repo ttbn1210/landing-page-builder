@@ -1,0 +1,57 @@
+@page
+@model QrCommerce.Web.Pages.Admin.TelecomJobsModel
+@{
+    ViewData["Title"] = "Telecom Jobs";
+}
+
+<form method="get" class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Search by phone..." value="@Model.Search" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Device</th>
+                <th>Phone</th>
+                <th>Message</th>
+                <th>Priority</th>
+                <th>Retries</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Sent</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var j in Model.Jobs)
+            {
+                <tr>
+                    <td>@j.Id</td>
+                    <td>@j.Device.DeviceCode</td>
+                    <td>@j.PhoneNumber</td>
+                    <td title="@j.Message">@(j.Message.Length > 40 ? j.Message[..40] + "..." : j.Message)</td>
+                    <td>@j.Priority</td>
+                    <td>@j.RetryCount</td>
+                    <td><span class="badge bg-@(j.Status == TelecomJobStatus.Sent ? "success" : j.Status == TelecomJobStatus.Failed ? "danger" : j.Status == TelecomJobStatus.Sending ? "info" : "warning")">@j.Status</span></td>
+                    <td>@j.CreatedAt.ToString("MM-dd HH:mm")</td>
+                    <td>@(j.SentAt?.ToString("MM-dd HH:mm") ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")"><a class="page-link" href="?page=@i&search=@Model.Search">@i</a></li>
+        }
+    </ul>
+</nav>

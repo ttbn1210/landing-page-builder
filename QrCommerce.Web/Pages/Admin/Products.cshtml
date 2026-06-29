@@ -1,0 +1,51 @@
+@page
+@model QrCommerce.Web.Pages.Admin.ProductsModel
+@{
+    ViewData["Title"] = "Products";
+}
+
+<form method="get" class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Search products..." value="@Model.Search" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Active</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Products)
+            {
+                <tr>
+                    <td>@p.Id</td>
+                    <td>@p.Name</td>
+                    <td>@p.Category</td>
+                    <td>@p.Price.ToString("N0") VND</td>
+                    <td><span class="badge bg-@(p.IsActive ? "success" : "secondary")">@(p.IsActive ? "Active" : "Inactive")</span></td>
+                    <td>@p.CreatedAt.ToString("yyyy-MM-dd")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")"><a class="page-link" href="?page=@i&search=@Model.Search">@i</a></li>
+        }
+    </ul>
+</nav>

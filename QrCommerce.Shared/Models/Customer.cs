@@ -1,0 +1,20 @@
+namespace QrCommerce.Shared.Models;
+
+public class Customer
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Phone { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public DateTime? FirstVisitAt { get; set; }
+    public DateTime? FirstOrderAt { get; set; }
+    public DateTime? LastOrderAt { get; set; }
+    public int TotalOrders { get; set; }
+    public decimal TotalSpent { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
+}

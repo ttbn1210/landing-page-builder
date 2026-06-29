@@ -1,0 +1,15 @@
+body { background: #f8f9fa; }
+.order-header { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 30px 20px; text-align: center; border-radius: 0 0 20px 20px; margin-bottom: 20px; }
+.order-header h4 { margin: 0; }
+.product-card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; }
+.product-card .product-info { flex: 1; }
+.product-card .product-name { font-weight: 600; margin: 0; }
+.product-card .product-price { color: #667eea; font-weight: 700; }
+.product-card .qty-control { display: flex; align-items: center; gap: 8px; }
+.product-card .qty-control button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #ddd; background: #fff; font-weight: bold; }
+.cart-summary { background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-top: 20px; }
+.checkout-form { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-top: 20px; }
+.btn-checkout { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; width: 100%; padding: 14px; border-radius: 12px; font-size: 1.1rem; font-weight: 600; }
+.btn-checkout:hover { opacity: 0.9; color: #fff; }
+.success-page { text-align: center; padding: 60px 20px; }
+.success-page .icon { font-size: 80px; color: #28a745; }

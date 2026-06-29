@@ -1,0 +1,86 @@
+@page
+@model QrCommerce.Web.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-primary">
+            <h3>@Model.Stats.TotalCampaigns</h3>
+            <p>Total Campaigns</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-info">
+            <h3>@Model.Stats.TotalQrScans</h3>
+            <p>Total QR Scans</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-success">
+            <h3>@Model.Stats.TotalOrders</h3>
+            <p>Total Orders</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-warning">
+            <h3>@Model.Stats.Revenue.ToString("N0")</h3>
+            <p>Revenue (VND)</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-info">
+            <h3>@Model.Stats.RepeatCustomers</h3>
+            <p>Repeat Customers</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-success">
+            <h3>@Model.Stats.SmsSent</h3>
+            <p>SMS Sent</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-danger">
+            <h3>@Model.Stats.FailedSms</h3>
+            <p>Failed SMS</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-3">
+        <div class="stat-card bg-gradient-dark">
+            <h3>@Model.Stats.OnlineDevices / @(Model.Stats.OnlineDevices + Model.Stats.OfflineDevices)</h3>
+            <p>Online Devices</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Daily Orders (Last 30 Days)</div>
+            <div class="card-body"><canvas id="dailyOrdersChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Revenue Trend</div>
+            <div class="card-body"><canvas id="revenueChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    new Chart(document.getElementById('dailyOrdersChart'), {
+        type: 'bar',
+        data: { labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyOrders.Select(x => x.Label))), datasets: [{ label: 'Orders', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyOrders.Select(x => x.Value))), backgroundColor: '#667eea' }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: { labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueTrend.Select(x => x.Label))), datasets: [{ label: 'Revenue', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueTrend.Select(x => x.Value))), borderColor: '#11998e', fill: false, tension: 0.3 }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+</script>
+}

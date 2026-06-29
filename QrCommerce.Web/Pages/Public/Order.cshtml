@@ -1,0 +1,147 @@
+@page "/q/{qrCode}"
+@model QrCommerce.Web.Pages.Public.OrderModel
+@{
+    ViewData["Title"] = "Order";
+    Layout = "_PublicLayout";
+}
+
+@if (Model.QrLocation == null)
+{
+    <div class="text-center py-5">
+        <h4>Invalid QR Code</h4>
+        <p class="text-muted">This QR code is not recognized.</p>
+    </div>
+}
+else
+{
+    <div class="order-header">
+        <i class="bi bi-qr-code" style="font-size: 40px;"></i>
+        <h4 class="mt-2">@Model.QrLocation.Campaign.Name</h4>
+        <p>@Model.QrLocation.Name</p>
+    </div>
+
+    <div id="product-list">
+        @foreach (var product in Model.Products)
+        {
+            <div class="product-card" data-id="@product.Id" data-price="@product.Price">
+                <div class="product-info">
+                    <p class="product-name">@product.Name</p>
+                    <small class="text-muted">@product.Description</small>
+                    <p class="product-price">@product.Price.ToString("N0") VND</p>
+                </div>
+                <div class="qty-control">
+                    <button type="button" onclick="changeQty(@product.Id, -1)">-</button>
+                    <span id="qty-@product.Id">0</span>
+                    <button type="button" onclick="changeQty(@product.Id, 1)">+</button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="cart-summary" id="cart-summary" style="display:none;">
+        <div class="d-flex justify-content-between">
+            <strong>Total:</strong>
+            <strong id="cart-total">0 VND</strong>
+        </div>
+    </div>
+
+    <div class="checkout-form" id="checkout-form" style="display:none;">
+        <h5 class="mb-3">Checkout</h5>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="customer-name" placeholder="Your name *" required />
+        </div>
+        <div class="mb-3">
+            <input type="tel" class="form-control" id="customer-phone" placeholder="Phone number *" required />
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" id="customer-address" placeholder="Delivery address" />
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" id="customer-notes" placeholder="Notes" rows="2"></textarea>
+        </div>
+        <button type="button" class="btn btn-checkout" onclick="submitOrder()">
+            <i class="bi bi-bag-check"></i> Place Order
+        </button>
+    </div>
+
+    <div class="success-page" id="success-page" style="display:none;">
+        <div class="icon"><i class="bi bi-check-circle-fill"></i></div>
+        <h4 class="mt-3">Order Placed!</h4>
+        <p class="text-muted">Your order <strong id="order-code"></strong> has been received.</p>
+        <p class="text-muted">You will receive an SMS confirmation shortly.</p>
+    </div>
+}
+
+@section Scripts {
+<script>
+    const cart = {};
+    const qrCode = '@Model.QrCode';
+    let customerLat = 0, customerLng = 0;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            customerLat = pos.coords.latitude;
+            customerLng = pos.coords.longitude;
+        });
+    }
+
+    function changeQty(productId, delta) {
+        if (!cart[productId]) cart[productId] = 0;
+        cart[productId] = Math.max(0, cart[productId] + delta);
+        document.getElementById('qty-' + productId).textContent = cart[productId];
+        updateCart();
+    }
+
+    function updateCart() {
+        let total = 0;
+        let hasItems = false;
+        document.querySelectorAll('.product-card').forEach(card => {
+            const id = card.dataset.id;
+            const price = parseFloat(card.dataset.price);
+            const qty = cart[id] || 0;
+            if (qty > 0) { total += price * qty; hasItems = true; }
+        });
+        document.getElementById('cart-summary').style.display = hasItems ? 'block' : 'none';
+        document.getElementById('checkout-form').style.display = hasItems ? 'block' : 'none';
+        document.getElementById('cart-total').textContent = total.toLocaleString() + ' VND';
+    }
+
+    async function submitOrder() {
+        const name = document.getElementById('customer-name').value.trim();
+        const phone = document.getElementById('customer-phone').value.trim();
+        if (!name || !phone) { alert('Name and phone are required'); return; }
+
+        const items = [];
+        for (const [productId, qty] of Object.entries(cart)) {
+            if (qty > 0) items.push({ productId: parseInt(productId), quantity: qty });
+        }
+        if (items.length === 0) { alert('Please select at least one item'); return; }
+
+        const body = {
+            name, phone,
+            address: document.getElementById('customer-address').value,
+            notes: document.getElementById('customer-notes').value,
+            latitude: customerLat, longitude: customerLng,
+            qrCode, items
+        };
+
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('product-list').style.display = 'none';
+                document.getElementById('cart-summary').style.display = 'none';
+                document.getElementById('checkout-form').style.display = 'none';
+                document.getElementById('order-code').textContent = data.orderCode;
+                document.getElementById('success-page').style.display = 'block';
+            } else {
+                alert(data.error || 'Order failed');
+            }
+        } catch (e) { alert('Network error'); }
+    }
+</script>
+}

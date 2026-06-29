@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QrCommerce.Android.Pages.SettingsPage"
+             Title="Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Device Settings" FontSize="20" FontAttributes="Bold" />
+
+            <Frame BackgroundColor="#f8f9fa" CornerRadius="8" Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Server URL" FontAttributes="Bold" />
+                    <Entry x:Name="ServerUrlEntry" Placeholder="http://server:5000" />
+
+                    <Label Text="Device Code" FontAttributes="Bold" />
+                    <Entry x:Name="DeviceCodeEntry" Placeholder="DEVICE_01" />
+
+                    <Label Text="API Key" FontAttributes="Bold" />
+                    <Entry x:Name="ApiKeyEntry" Placeholder="Your API key" IsPassword="True" />
+
+                    <Button Text="Save Settings" BackgroundColor="#667eea" TextColor="White" CornerRadius="8" Clicked="OnSaveClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame BackgroundColor="#f8f9fa" CornerRadius="8" Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Register New Device" FontAttributes="Bold" />
+                    <Entry x:Name="RegDeviceCode" Placeholder="Device Code" />
+                    <Entry x:Name="RegDeviceName" Placeholder="Device Name" />
+                    <Entry x:Name="RegPhoneNumber" Placeholder="Phone Number" />
+                    <Entry x:Name="RegCarrier" Placeholder="Carrier" />
+                    <Button Text="Register" BackgroundColor="#28a745" TextColor="White" CornerRadius="8" Clicked="OnRegisterClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button Text="Request SMS Permission" BackgroundColor="#ffc107" TextColor="Black" CornerRadius="8" Clicked="OnPermissionClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

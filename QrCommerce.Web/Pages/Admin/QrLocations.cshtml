@@ -1,0 +1,55 @@
+@page
+@model QrCommerce.Web.Pages.Admin.QrLocationsModel
+@{
+    ViewData["Title"] = "QR Locations";
+}
+
+<form method="get" class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Search locations..." value="@Model.Search" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>QR Code</th>
+                <th>Campaign</th>
+                <th>Address</th>
+                <th>Scans</th>
+                <th>Orders</th>
+                <th>Vehicle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in Model.Locations)
+            {
+                <tr>
+                    <td>@q.Id</td>
+                    <td>@q.Name</td>
+                    <td><code>@q.QrCode</code></td>
+                    <td>@q.Campaign.Name</td>
+                    <td>@q.Address</td>
+                    <td>@q.TotalScans</td>
+                    <td>@q.TotalOrders</td>
+                    <td>@q.VehicleCode</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")"><a class="page-link" href="?page=@i&search=@Model.Search">@i</a></li>
+        }
+    </ul>
+</nav>
