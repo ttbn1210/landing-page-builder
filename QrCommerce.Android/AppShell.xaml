@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:pages="clr-namespace:QrCommerce.Android.Pages"
+       x:Class="QrCommerce.Android.AppShell"
+       Shell.FlyoutBehavior="Flyout"
+       Title="QR Commerce Gateway">
+    <FlyoutItem Title="Dashboard" Icon="icon_dashboard.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:DashboardPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="Logs" Icon="icon_logs.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:LogsPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="Settings" Icon="icon_settings.png">
+        <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" />
+    </FlyoutItem>
+</Shell>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QrCommerce.Android.Pages.LogsPage"
+             Title="Logs">
+    <VerticalStackLayout Padding="10">
+        <Label Text="Activity Logs" FontSize="18" FontAttributes="Bold" Margin="0,0,0,10" />
+        <ListView x:Name="LogsListView" HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Text="Clear Logs" BackgroundColor="#6c757d" TextColor="White" CornerRadius="8" Clicked="OnClearClicked" Margin="0,10,0,0" />
+    </VerticalStackLayout>
+</ContentPage>

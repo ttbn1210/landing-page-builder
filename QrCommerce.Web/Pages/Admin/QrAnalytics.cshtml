@@ -1,0 +1,57 @@
+@page
+@model QrCommerce.Web.Pages.Admin.QrAnalyticsModel
+@{
+    ViewData["Title"] = "QR Analytics";
+}
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Top QR Locations (by Scans)</div>
+            <div class="card-body"><canvas id="topLocationsChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">SMS Success Rate</div>
+            <div class="card-body"><canvas id="smsChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Campaign Conversion Rate (%)</div>
+            <div class="card-body"><canvas id="conversionChart"></canvas></div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">Daily Orders</div>
+            <div class="card-body"><canvas id="ordersChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    new Chart(document.getElementById('topLocationsChart'), {
+        type: 'bar',
+        data: { labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopLocations.Select(x => x.Label))), datasets: [{ label: 'Scans', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TopLocations.Select(x => x.Value))), backgroundColor: '#667eea' }] },
+        options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } }
+    });
+    new Chart(document.getElementById('smsChart'), {
+        type: 'doughnut',
+        data: { labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SmsRate.Select(x => x.Label))), datasets: [{ data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SmsRate.Select(x => x.Value))), backgroundColor: ['#28a745','#dc3545','#ffc107'] }] },
+        options: { responsive: true }
+    });
+    new Chart(document.getElementById('conversionChart'), {
+        type: 'bar',
+        data: { labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Conversion.Select(x => x.Label))), datasets: [{ label: 'Rate %', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Conversion.Select(x => x.Value))), backgroundColor: '#11998e' }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+    new Chart(document.getElementById('ordersChart'), {
+        type: 'line',
+        data: { labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyOrders.Select(x => x.Label))), datasets: [{ label: 'Orders', data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyOrders.Select(x => x.Value))), borderColor: '#764ba2', fill: false, tension: 0.3 }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+</script>
+}

@@ -1,0 +1,50 @@
+@page
+@model QrCommerce.Web.Pages.Admin.TelecomDevicesModel
+@{
+    ViewData["Title"] = "Telecom Devices";
+}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Carrier</th>
+                <th>Battery</th>
+                <th>Network</th>
+                <th>Status</th>
+                <th>Last Heartbeat</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in Model.Devices)
+            {
+                <tr>
+                    <td><code>@d.DeviceCode</code></td>
+                    <td>@d.DeviceName</td>
+                    <td>@d.PhoneNumber</td>
+                    <td>@d.Carrier</td>
+                    <td>
+                        <div class="progress" style="width: 80px;">
+                            <div class="progress-bar @(d.BatteryLevel > 50 ? "bg-success" : d.BatteryLevel > 20 ? "bg-warning" : "bg-danger")" style="width: @d.BatteryLevel%">@d.BatteryLevel%</div>
+                        </div>
+                    </td>
+                    <td>@d.NetworkType</td>
+                    <td><span class="badge @(d.IsOnline ? "badge-online" : "badge-offline")">@(d.IsOnline ? "Online" : "Offline")</span></td>
+                    <td>@(d.LastHeartbeat?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")"><a class="page-link" href="?page=@i">@i</a></li>
+        }
+    </ul>
+</nav>

@@ -1,0 +1,44 @@
+@page
+@model QrCommerce.Web.Pages.Admin.TelecomLogsModel
+@{
+    ViewData["Title"] = "Telecom Logs";
+}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Job ID</th>
+                <th>Phone</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Response</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var l in Model.Logs)
+            {
+                <tr>
+                    <td>@l.Id</td>
+                    <td>@l.TelecomJobId</td>
+                    <td>@l.PhoneNumber</td>
+                    <td>@(l.Message.Length > 40 ? l.Message[..40] + "..." : l.Message)</td>
+                    <td><span class="badge bg-@(l.Status == TelecomJobStatus.Sent ? "success" : "danger")">@l.Status</span></td>
+                    <td><code>@l.RawResponse</code></td>
+                    <td>@l.CreatedAt.ToString("MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")"><a class="page-link" href="?page=@i">@i</a></li>
+        }
+    </ul>
+</nav>

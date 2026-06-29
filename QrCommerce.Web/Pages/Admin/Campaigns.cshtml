@@ -1,0 +1,57 @@
+@page
+@model QrCommerce.Web.Pages.Admin.CampaignsModel
+@{
+    ViewData["Title"] = "Campaigns";
+}
+
+<form method="get" class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Search campaigns..." value="@Model.Search" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Status</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Budget</th>
+                <th>Locations</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model.Campaigns)
+            {
+                <tr>
+                    <td>@c.Id</td>
+                    <td>@c.Name</td>
+                    <td><code>@c.CampaignCode</code></td>
+                    <td><span class="badge bg-@(c.Status == CampaignStatus.Running ? "success" : c.Status == CampaignStatus.Paused ? "warning" : c.Status == CampaignStatus.Completed ? "secondary" : "info")">@c.Status</span></td>
+                    <td>@c.StartDate.ToString("yyyy-MM-dd")</td>
+                    <td>@c.EndDate.ToString("yyyy-MM-dd")</td>
+                    <td>@c.Budget.ToString("N0")</td>
+                    <td>@c.QrLocations.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Page ? "active" : "")">
+                <a class="page-link" href="?page=@i&search=@Model.Search">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
