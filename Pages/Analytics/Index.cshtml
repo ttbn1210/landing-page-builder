@@ -1,0 +1,94 @@
+@page
+@model TrackQR.Web.Pages.Analytics.IndexModel
+@{
+    ViewData["Title"] = "Analytics";
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-12">
+        <div class="card form-card">
+            <h5 class="mb-3">Conversion Funnel</h5>
+            <div class="row text-center">
+                <div class="col">
+                    <div class="fs-3 fw-bold text-primary">@Model.Funnel.TotalScans</div>
+                    <small class="text-muted">QR Scans</small>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="fas fa-chevron-right text-muted"></i>
+                </div>
+                <div class="col">
+                    <div class="fs-3 fw-bold text-info">@Model.Funnel.PageViews</div>
+                    <small class="text-muted">Page Views</small>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="fas fa-chevron-right text-muted"></i>
+                </div>
+                <div class="col">
+                    <div class="fs-3 fw-bold text-warning">@Model.Funnel.FormOpens</div>
+                    <small class="text-muted">Form Opens</small>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="fas fa-chevron-right text-muted"></i>
+                </div>
+                <div class="col">
+                    <div class="fs-3 fw-bold text-success">@Model.Funnel.FormSubmits</div>
+                    <small class="text-muted">Submissions</small>
+                </div>
+                <div class="col d-flex align-items-center justify-content-center">
+                    <i class="fas fa-chevron-right text-muted"></i>
+                </div>
+                <div class="col">
+                    <div class="fs-3 fw-bold text-danger">@Model.Funnel.LeadsCaptured</div>
+                    <small class="text-muted">Leads</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-header">
+                <i class="fas fa-chart-line me-2"></i>QR Code Performance
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>QR Code</th>
+                            <th>Campaign</th>
+                            <th>Placement</th>
+                            <th>Scans</th>
+                            <th>Unique Visitors</th>
+                            <th>Conversions</th>
+                            <th>Conv. Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var qr in Model.QRPerformance)
+                        {
+                            <tr>
+                                <td><code>@qr.ShortCode</code></td>
+                                <td>@qr.CampaignName</td>
+                                <td>@qr.PlacementName</td>
+                                <td>@qr.TotalScans</td>
+                                <td>@qr.UniqueVisitors</td>
+                                <td>@qr.Conversions</td>
+                                <td>
+                                    <span class="badge bg-@(qr.ConversionRate > 5 ? "success" : "warning")">
+                                        @qr.ConversionRate.ToString("F1")%
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                        @if (!Model.QRPerformance.Any())
+                        {
+                            <tr><td colspan="7" class="text-center text-muted">No data yet</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

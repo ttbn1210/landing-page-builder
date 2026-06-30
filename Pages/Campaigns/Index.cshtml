@@ -1,0 +1,62 @@
+@page
+@model TrackQR.Web.Pages.Campaigns.IndexModel
+@{
+    ViewData["Title"] = "Campaigns";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div></div>
+    <a asp-page="Create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> New Campaign</a>
+</div>
+
+<div class="card table-card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Budget</th>
+                    <th>Placements</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var campaign in Model.Campaigns)
+                {
+                    <tr>
+                        <td><strong>@campaign.Name</strong></td>
+                        <td>
+                            <span class="badge badge-status bg-@GetStatusColor(campaign.Status)">
+                                @campaign.Status
+                            </span>
+                        </td>
+                        <td>@DateTimeHelper.ToShortDate(campaign.StartDate)</td>
+                        <td>@DateTimeHelper.ToShortDate(campaign.EndDate)</td>
+                        <td>@(campaign.Budget?.ToString("N0") ?? "-")</td>
+                        <td>@campaign.Placements.Count</td>
+                        <td>
+                            <a asp-page="Edit" asp-route-id="@campaign.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string GetStatusColor(CampaignStatus status) => status switch
+    {
+        CampaignStatus.Active => "success",
+        CampaignStatus.Draft => "secondary",
+        CampaignStatus.Paused => "warning",
+        CampaignStatus.Completed => "info",
+        CampaignStatus.Archived => "dark",
+        _ => "secondary"
+    };
+}
