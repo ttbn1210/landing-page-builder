@@ -17,6 +17,7 @@ using TrackQR.Web.Services.Analytics;
 using TrackQR.Web.Services.Landing;
 using TrackQR.Web.Services.Leads;
 using TrackQR.Web.Services.QR;
+using TrackQR.Web.Services.Media;
 using TrackQR.Web.Services.Tracking;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,7 @@ builder.Services.AddScoped<ScriptInjectorService>();
 builder.Services.AddScoped<AnalyticsService>();
 builder.Services.AddScoped<FunnelService>();
 builder.Services.AddScoped<LeadScoreService>();
+builder.Services.AddScoped<MediaFileService>();
 
 // Repositories
 builder.Services.AddScoped<CampaignRepository>();

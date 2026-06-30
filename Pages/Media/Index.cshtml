@@ -1,0 +1,142 @@
+@page
+@model TrackQR.Web.Pages.Media.IndexModel
+@{
+    ViewData["Title"] = "Media";
+}
+
+<div class="row g-4">
+    <!-- Upload Section -->
+    <div class="col-12">
+        <div class="card form-card">
+            <h5 class="mb-3"><i class="fas fa-cloud-upload-alt"></i> Upload File</h5>
+            <form method="post" asp-page-handler="Upload" enctype="multipart/form-data">
+                <div class="input-group">
+                    <input type="file" name="file" class="form-control" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.mp4,.webm,.svg" required />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                </div>
+                <small class="text-muted mt-1 d-block">Max 10MB. Hỗ trợ: images, PDF, documents, video, ZIP</small>
+            </form>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger mt-2 mb-0">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <span>@error.ErrorMessage</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- File List -->
+    <div class="col-12">
+        <div class="card table-card">
+            <div class="card-body">
+                @if (Model.Files.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th style="width:50px">Preview</th>
+                                    <th>File Name</th>
+                                    <th>Type</th>
+                                    <th>Size</th>
+                                    <th>Modified</th>
+                                    <th>URL</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var file in Model.Files)
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (file.ContentType.StartsWith("image/"))
+                                            {
+                                                <img src="@file.Url" alt="@file.FileName" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" />
+                                            }
+                                            else
+                                            {
+                                                <i class="fas @GetFileIcon(file.ContentType) fa-2x text-muted"></i>
+                                            }
+                                        </td>
+                                        <td><strong>@file.FileName</strong></td>
+                                        <td><small class="text-muted">@file.ContentType</small></td>
+                                        <td>@FormatFileSize(file.Size)</td>
+                                        <td><small>@file.LastModified.ToString("dd/MM/yyyy HH:mm")</small></td>
+                                        <td>
+                                            <div class="input-group input-group-sm" style="max-width:250px">
+                                                <input type="text" class="form-control form-control-sm" value="@file.Url" readonly id="url-@file.FileName.GetHashCode()" />
+                                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copyUrl('url-@file.FileName.GetHashCode()')">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="@file.Url" target="_blank" class="btn btn-outline-info" title="View">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                                <form method="post" asp-page-handler="Delete" class="d-inline" onsubmit="return confirm('Xóa file này?')">
+                                                    <input type="hidden" name="fileName" value="@file.FileName" />
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-muted small mt-2">
+                        @Model.Files.Count file(s) — Total: @FormatFileSize(Model.Files.Sum(f => f.Size))
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-folder-open fa-3x mb-3"></i>
+                        <p>Chưa có file nào. Upload file đầu tiên!</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function copyUrl(inputId) {
+        var input = document.getElementById(inputId);
+        input.select();
+        document.execCommand('copy');
+        input.classList.add('is-valid');
+        setTimeout(function() { input.classList.remove('is-valid'); }, 1500);
+    }
+</script>
+}
+
+@functions {
+    string GetFileIcon(string contentType)
+    {
+        if (contentType.StartsWith("image/")) return "fa-file-image";
+        if (contentType.Contains("pdf")) return "fa-file-pdf";
+        if (contentType.Contains("word") || contentType.Contains("doc")) return "fa-file-word";
+        if (contentType.Contains("excel") || contentType.Contains("xls")) return "fa-file-excel";
+        if (contentType.StartsWith("video/")) return "fa-file-video";
+        if (contentType.Contains("zip")) return "fa-file-archive";
+        return "fa-file";
+    }
+
+    string FormatFileSize(long bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / (1024.0 * 1024.0):F1} MB";
+    }
+}
