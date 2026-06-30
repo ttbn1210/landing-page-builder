@@ -16,9 +16,10 @@
             <h5 class="mb-3">Lead Information</h5>
             <table class="table table-sm">
                 <tr><td class="fw-bold">Name</td><td>@(Model.Lead.FullName ?? "-")</td></tr>
-                <tr><td class="fw-bold">Phone</td><td>@(Model.Lead.Phone ?? "-")</td></tr>
-                <tr><td class="fw-bold">Email</td><td>@(Model.Lead.Email ?? "-")</td></tr>
-                <tr><td class="fw-bold">Message</td><td>@(Model.Lead.Message ?? "-")</td></tr>
+                <tr><td class="fw-bold">Phone</td><td>@(string.IsNullOrEmpty(Model.Lead.PhoneNumber) ? "-" : Model.Lead.PhoneNumber)</td></tr>
+                <tr><td class="fw-bold">Email</td><td>@(string.IsNullOrEmpty(Model.Lead.Email) ? "-" : Model.Lead.Email)</td></tr>
+                <tr><td class="fw-bold">Form Name</td><td>@(Model.Lead.FormName ?? "-")</td></tr>
+                <tr><td class="fw-bold">Form Type</td><td>@(Model.Lead.FormType ?? "-")</td></tr>
                 <tr><td class="fw-bold">Score</td><td>@Model.Lead.Score / 100</td></tr>
                 <tr><td class="fw-bold">Created</td><td>@Model.Lead.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td></tr>
             </table>

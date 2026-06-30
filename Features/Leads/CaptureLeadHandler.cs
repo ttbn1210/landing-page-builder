@@ -16,7 +16,7 @@ public class CaptureLeadHandler
         _scoreService = scoreService;
     }
 
-    public async Task<Lead?> HandleAsync(string sessionKey, string? fullName, string? phone, string? email, string? message)
+    public async Task<Lead?> HandleAsync(string sessionKey, string? fullName, string? phoneNumber, string? email, string? formDataJson, string? formName, string? formType)
     {
         var session = await _db.VisitorSessions
             .FirstOrDefaultAsync(s => s.SessionKey == sessionKey);
@@ -30,9 +30,11 @@ public class CaptureLeadHandler
         if (existingLead != null)
         {
             existingLead.FullName = fullName ?? existingLead.FullName;
-            existingLead.Phone = phone ?? existingLead.Phone;
+            existingLead.PhoneNumber = phoneNumber ?? existingLead.PhoneNumber;
             existingLead.Email = email ?? existingLead.Email;
-            existingLead.Message = message ?? existingLead.Message;
+            existingLead.FormDataJson = formDataJson ?? existingLead.FormDataJson;
+            existingLead.FormName = formName ?? existingLead.FormName;
+            existingLead.FormType = formType ?? existingLead.FormType;
             await _db.SaveChangesAsync();
             return existingLead;
         }
@@ -42,10 +44,12 @@ public class CaptureLeadHandler
         var lead = new Lead
         {
             SessionId = session.Id,
-            FullName = fullName,
-            Phone = phone,
-            Email = email,
-            Message = message,
+            FullName = fullName ?? string.Empty,
+            PhoneNumber = phoneNumber ?? string.Empty,
+            Email = email ?? string.Empty,
+            FormDataJson = formDataJson,
+            FormName = formName,
+            FormType = formType,
             Status = LeadStatus.New,
             Score = score
         };

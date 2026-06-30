@@ -117,7 +117,7 @@ app.MapPost("/api/track/lead", async (HttpContext context, CaptureLeadHandler ha
     if (body == null || string.IsNullOrEmpty(body.SessionKey))
         return Results.BadRequest();
 
-    var lead = await handler.HandleAsync(body.SessionKey, body.FullName, body.Phone, body.Email, body.Message);
+    var lead = await handler.HandleAsync(body.SessionKey, body.FullName, body.PhoneNumber, body.Email, body.FormDataJson, body.FormName, body.FormType);
     return lead != null ? Results.Ok(new { lead.Id }) : Results.NotFound();
 });
 
@@ -158,4 +158,4 @@ app.Run();
 
 // Request models for minimal API
 public record TrackEventRequest(string SessionKey, string EventType, string? ElementName, string? Value);
-public record CaptureLeadRequest(string SessionKey, string? FullName, string? Phone, string? Email, string? Message);
+public record CaptureLeadRequest(string SessionKey, string? FullName, string? PhoneNumber, string? Email, string? FormDataJson, string? FormName, string? FormType);
