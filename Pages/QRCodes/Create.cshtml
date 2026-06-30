@@ -1,0 +1,36 @@
+@page
+@model TrackQR.Web.Pages.QRCodes.CreateModel
+@{
+    ViewData["Title"] = "Generate QR Code";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card form-card">
+            <h4 class="mb-4">Generate QR Code</h4>
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Campaign</label>
+                    <select asp-for="CampaignId" class="form-select" asp-items="Model.CampaignOptions" required></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Placement</label>
+                    <select asp-for="PlacementId" class="form-select" asp-items="Model.PlacementOptions" required></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Landing Page</label>
+                    <select asp-for="LandingPageId" class="form-select" asp-items="Model.LandingPageOptions" required></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Custom Short Code (optional)</label>
+                    <input asp-for="CustomShortCode" class="form-control" placeholder="e.g. summer-car-d1" />
+                    <small class="text-muted">Leave empty to auto-generate</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Generate QR Code</button>
+                    <a asp-page="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+@page
+@model TrackQR.Web.Pages.LandingPages.IndexModel
+@{
+    ViewData["Title"] = "Landing Pages";
+}
+
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div></div>
+    <a asp-page="Create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> New Landing Page</a>
+</div>
+
+<div class="card table-card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Template</th>
+                    <th>Status</th>
+                    <th>QR Codes</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lp in Model.LandingPages)
+                {
+                    <tr>
+                        <td><strong>@lp.Name</strong></td>
+                        <td><span class="badge bg-light text-dark">@lp.TemplateType</span></td>
+                        <td>
+                            <span class="badge badge-status bg-@GetStatusColor(lp.Status)">@lp.Status</span>
+                        </td>
+                        <td>@lp.QRCodes.Count</td>
+                        <td>@DateTimeHelper.ToRelativeTime(lp.CreatedAt)</td>
+                        <td>
+                            <a asp-page="Edit" asp-route-id="@lp.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string GetStatusColor(LandingPageStatus status) => status switch
+    {
+        LandingPageStatus.Published => "success",
+        LandingPageStatus.Draft => "secondary",
+        LandingPageStatus.Archived => "dark",
+        _ => "secondary"
+    };
+}

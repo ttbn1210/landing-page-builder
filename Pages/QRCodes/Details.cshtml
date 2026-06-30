@@ -1,0 +1,54 @@
+@page "{id:guid}"
+@model TrackQR.Web.Pages.QRCodes.DetailsModel
+@{
+    ViewData["Title"] = $"QR Code: {Model.QRCode?.ShortCode}";
+}
+
+@if (Model.QRCode == null)
+{
+    <div class="alert alert-warning">QR Code not found.</div>
+    return;
+}
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card form-card text-center">
+            <h5>@Model.QRCode.ShortCode</h5>
+            @if (Model.ImageExists)
+            {
+                <img src="/qrcodes/@(Model.QRCode.ShortCode).png" alt="QR Code" class="img-fluid my-3" style="max-width: 250px;" />
+            }
+            else
+            {
+                <div class="my-3 p-4 bg-light rounded">
+                    <i class="fas fa-qrcode fa-3x text-muted"></i>
+                    <p class="mt-2 text-muted">Image not generated</p>
+                </div>
+            }
+            <div class="mt-3">
+                <span class="badge bg-@(Model.QRCode.IsActive ? "success" : "danger") fs-6">
+                    @(Model.QRCode.IsActive ? "Active" : "Disabled")
+                </span>
+            </div>
+            <div class="mt-3">
+                <small class="text-muted">URL:</small><br />
+                <code>@Model.BaseUrl/@Model.QRCode.ShortCode</code>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card table-card mb-3">
+            <div class="card-header">Details</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr><td class="fw-bold">Campaign</td><td>@Model.QRCode.Campaign.Name</td></tr>
+                    <tr><td class="fw-bold">Placement</td><td>@Model.QRCode.Placement.Name</td></tr>
+                    <tr><td class="fw-bold">Landing Page</td><td>@Model.QRCode.LandingPage.Name</td></tr>
+                    <tr><td class="fw-bold">Total Sessions</td><td>@Model.QRCode.VisitorSessions.Count</td></tr>
+                    <tr><td class="fw-bold">Total Scans</td><td>@Model.QRCode.ScanEvents.Count</td></tr>
+                    <tr><td class="fw-bold">Created</td><td>@Model.QRCode.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,107 @@
+@page
+@model TrackQR.Web.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card border-primary">
+            <div class="card-body">
+                <div class="stat-label text-primary">Total Scans Today</div>
+                <div class="stat-value">@Model.Data.TotalScansToday</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card border-success">
+            <div class="card-body">
+                <div class="stat-label text-success">Unique Visitors</div>
+                <div class="stat-value">@Model.Data.UniqueVisitorsToday</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card border-info">
+            <div class="card-body">
+                <div class="stat-label text-info">Leads Today</div>
+                <div class="stat-value">@Model.Data.LeadsToday</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card border-warning">
+            <div class="card-body">
+                <div class="stat-label text-warning">Conversion Rate</div>
+                <div class="stat-value">@Model.Data.ConversionRate%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card table-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-qrcode me-2"></i>Top Performing QR Codes</span>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Short Code</th>
+                            <th>Campaign</th>
+                            <th>Scans</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var qr in Model.Data.TopQRCodes)
+                        {
+                            <tr>
+                                <td><code>@qr.ShortCode</code></td>
+                                <td>@qr.CampaignName</td>
+                                <td><span class="badge bg-primary">@qr.TotalScans</span></td>
+                            </tr>
+                        }
+                        @if (!Model.Data.TopQRCodes.Any())
+                        {
+                            <tr><td colspan="3" class="text-muted text-center">No data yet</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card table-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-bullhorn me-2"></i>Top Campaigns</span>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Scans</th>
+                            <th>Leads</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.Data.TopCampaigns)
+                        {
+                            <tr>
+                                <td>@c.Name</td>
+                                <td><span class="badge bg-info">@c.TotalScans</span></td>
+                                <td><span class="badge bg-success">@c.TotalLeads</span></td>
+                            </tr>
+                        }
+                        @if (!Model.Data.TopCampaigns.Any())
+                        {
+                            <tr><td colspan="3" class="text-muted text-center">No data yet</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

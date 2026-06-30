@@ -1,38 +1,22 @@
-# Visual Studio
-.vs/
-*.user
-*.suo
-*.sln.docstates
-
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
+## .NET
 bin/
 obj/
-
-# Visual Studio Cache
-.vs/
-
-# Rider
-.idea/
-*.sln.iml
-
-# Environment variables
-.env
-.env.local
-
-# Database
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 *.db
-*.mdf
-*.ldf
+*.db-journal
 
-# Node modules
-node_modules/
-npm-debug.log
+## IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Project specific
+wwwroot/qrcodes/*.png

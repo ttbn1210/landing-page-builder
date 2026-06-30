@@ -1,0 +1,41 @@
+@page
+@model TrackQR.Web.Pages.Settings.IndexModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card form-card">
+            <h4 class="mb-4">Application Settings</h4>
+
+            <div class="mb-4">
+                <h6>General</h6>
+                <table class="table table-sm">
+                    <tr><td class="fw-bold">App Name</td><td>TrackQR</td></tr>
+                    <tr><td class="fw-bold">Version</td><td>1.0.0</td></tr>
+                    <tr><td class="fw-bold">Base URL</td><td>@Model.BaseUrl</td></tr>
+                    <tr><td class="fw-bold">Database</td><td>SQLite (trackqr.db)</td></tr>
+                </table>
+            </div>
+
+            <div class="mb-4">
+                <h6>Statistics</h6>
+                <table class="table table-sm">
+                    <tr><td class="fw-bold">Total Campaigns</td><td>@Model.TotalCampaigns</td></tr>
+                    <tr><td class="fw-bold">Total QR Codes</td><td>@Model.TotalQRCodes</td></tr>
+                    <tr><td class="fw-bold">Total Leads</td><td>@Model.TotalLeads</td></tr>
+                    <tr><td class="fw-bold">Total Landing Pages</td><td>@Model.TotalLandingPages</td></tr>
+                </table>
+            </div>
+
+            <div class="mb-4">
+                <h6>System</h6>
+                <table class="table table-sm">
+                    <tr><td class="fw-bold">Runtime</td><td>@System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription</td></tr>
+                    <tr><td class="fw-bold">OS</td><td>@System.Runtime.InteropServices.RuntimeInformation.OSDescription</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
