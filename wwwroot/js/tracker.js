@@ -57,17 +57,26 @@
         if (form.id === 'leadForm' || form.getAttribute('data-track') === 'form-submit') {
             e.preventDefault();
 
-            var elementName = form.getAttribute('data-element') || form.id || 'form';
-            sendEvent('FormSubmit', elementName, '');
+            var formName = form.getAttribute('data-form-name') || form.id || 'form';
+            var formType = form.getAttribute('data-form-type') || 'contact';
+            sendEvent('FormSubmit', formName, '');
 
-            // Collect form data and submit lead
+            // Collect all form data as JSON
             var formData = new FormData(form);
+            var formDataObj = {};
+            formData.forEach(function (value, key) {
+                formDataObj[key] = value;
+            });
+
+            // Build lead payload matching API contract
             var leadPayload = {
                 sessionKey: sessionKey,
-                fullName: formData.get('fullName') || '',
-                phone: formData.get('phone') || '',
+                fullName: formData.get('fullName') || formData.get('name') || '',
+                phoneNumber: formData.get('phone') || formData.get('phoneNumber') || '',
                 email: formData.get('email') || '',
-                message: formData.get('message') || ''
+                formDataJson: JSON.stringify(formDataObj),
+                formName: formName,
+                formType: formType
             };
 
             var xhr = new XMLHttpRequest();
